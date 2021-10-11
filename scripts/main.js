@@ -30,7 +30,14 @@ const renderTabs = (q = '') => {
                 id: -1
             })
         }
-        if(tabs.length == 0) {
+        if(isValidURL(q)) {
+            tabs.unshift({
+                title: "Ouvrir dans un nouvel onglet",
+                url: 'https://' + q,
+                favIconUrl: '/assets/favicons/launch.png',
+                id: -2
+            })
+        } else if(tabs.length == 0) {
             tabs.push({
                 title: `Rechercher ${q} sur Google`,
                 favIconUrl: 'https://www.google.com/favicon.ico',
@@ -92,6 +99,11 @@ const renderSeleted = () => {
 const input = document.getElementById('input')
 let lastSearch = input.value
 
+const isValidURL = (string) => {
+    var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g)
+    return (res !== null)
+}
+
 input.addEventListener('keyup', e => {
     if(e.keyCode == 38) {
         selected--
@@ -101,6 +113,10 @@ input.addEventListener('keyup', e => {
         if(selectedTabId == -1) {
             chrome.tabs.create({
                 url: `https://www.google.com/search?q=${encodeURIComponent(input.value)}`
+            })
+        } else if(selectedTabId == -2) {
+            chrome.tabs.create({
+                url: `https://${input.value}`
             })
         } else {
             chrome.tabs.get(selectedTabId, function(tab) {
