@@ -1,44 +1,74 @@
 const list = document.getElementById('list')
 let selected = 0
 let selectedTabId = 0
+let tabs = []
+let i = 0
 
 const renderTabs = (q = '') => {
     list.innerHTML = ''
-    chrome.tabs.query({}, function (tabs) {
-        tabs.forEach(function (tab) {
-            let li = document.createElement('li')
-            li.classList.add('list__item')
-            li.setAttribute('data-id', tab.id)
-            li.innerHTML = `
-                <img class="list__item-favicon" src="${tab.favIconUrl}">
-                <span class="list__item-text">
-                    <span class="list__item-first-line">${tab.title}</span>
-                    <span class="list__item-second-line">${tab.url}</span>
-                </span>
-                <button class="list__item-action icon-button icon-button--small">
-                    <svg viewBox="0 0 24 24">
-                        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
-                    </svg>
-                </button>
-            `
-            if(tab.title.toLowerCase().includes(q.toLowerCase()) || tab.url.includes(q.toLowerCase())) {
-                if(selected == i) {
-                    li.classList.add('list__item--selected')
-                    selected = false
-                }
-                if(tab.active) {
-                    li.classList.add('list__item--active')
-                    list.insertBefore(li, list.firstChild)
-                } else {
-                    list.appendChild(li)
-                }
-            }
-        });
+    chrome.tabs.query({}, function (_tabs) {
+        tabs = _tabs
+    });
+    if(q != '') {
+        tabs = tabs.filter(tab => {
+            return tab.title.toLowerCase().includes(q.toLowerCase())
+                || tab.url.includes(q.toLowerCase())
+        })
+        tabs.find(x => x.url.includes('chrome://')).favIconUrl = "/assets/favicons/chrome.png"
+        mathResult = null
+        if(q.match(/^[0-9]+$/) == null) {
+            stringMath(q, (err, res) => {
+                mathResult = res
+            })
+        }
+        console.log(mathResult)
+        if (mathResult) {
+            tabs.unshift({
+                title: `${q} = ${mathResult}`,
+                favIconUrl: '/assets/favicons/calc.png',
+                id: -1
+            })
+        }
+        if(tabs.length == 0) {
+            tabs.push({
+                title: `Rechercher ${q} sur Google`,
+                favIconUrl: 'https://www.google.com/favicon.ico',
+                id: -1
+            })
+        }
+    }
+    tabs.forEach(function (tab) {
+        let li = document.createElement('li')
+        li.classList.add('list__item')
+        li.setAttribute('data-id', tab.id)
+        li.innerHTML = `
+            <img class="list__item-favicon" src="${tab.favIconUrl || '/assets/favicons/default.png'}">
+            <span class="list__item-text list__item-text--${tab.url ? 'two-lines' : 'one-line'}">
+                <span class="list__item-first-line">${tab.title}</span>
+                <span class="list__item-second-line">${tab.url}</span>
+            </span>
+            <button class="list__item-action icon-button icon-button--small">
+                <svg viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                </svg>
+            </button>
+        `
+        if(selected == i) {
+            li.classList.add('list__item--selected')
+            selected = false
+        }
+        if(tab.active) {
+            li.classList.add('list__item--active')
+            list.insertBefore(li, list.firstChild)
+        } else {
+            list.appendChild(li)
+        }
     });
 };
 
 const renderSeleted = () => {
     listItems = document.querySelectorAll('.list__item')
+    if(listItems.length == 0) return
     i = 0
     listItems.forEach(function (item) {
         item.classList.remove('list__item--selected')
@@ -67,9 +97,15 @@ input.addEventListener('keyup', e => {
     } else if(e.keyCode == 40) {
         selected++
     } else if(e.keyCode == 13) {
-        chrome.tabs.get(selectedTabId, function(tab) {
-            chrome.tabs.highlight({'tabs': tab.index}, function() {})
-        })
+        if(selectedTabId == -1) {
+            chrome.tabs.create({
+                url: `https://www.google.com/search?q=${encodeURIComponent(input.value)}`
+            })
+        } else {
+            chrome.tabs.get(selectedTabId, function(tab) {
+                chrome.tabs.highlight({'tabs': tab.index}, function() {})
+            })
+        }
     }
     if(lastSearch != input.value) {
         renderTabs(lastSearch = input.value)
@@ -77,4 +113,7 @@ input.addEventListener('keyup', e => {
     renderSeleted(selected)
 })
 
-renderTabs()
+document.addEventListener('DOMContentLoaded', () => {
+    renderTabs()
+    renderSeleted(selected)
+})

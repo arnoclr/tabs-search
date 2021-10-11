@@ -85,6 +85,9 @@ body {
     max-width: 250px;
     margin-right: 24px;
 }
+.list__item-text--one-line .list__item-second-line {
+    display: none;
+}
 .list__item:hover .list__item-text {
     margin-right: 56px;
     max-width: 228px;
