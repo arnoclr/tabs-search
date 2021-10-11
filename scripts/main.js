@@ -14,7 +14,8 @@ const renderTabs = (q = '') => {
             return tab.title.toLowerCase().includes(q.toLowerCase())
                 || tab.url.includes(q.toLowerCase())
         })
-        tabs.find(x => x.url.includes('chrome://')).favIconUrl = "/assets/favicons/chrome.png"
+        tabs.filter(x => x.url.includes('chrome://'))
+            .forEach(x => x.favIconUrl = "/assets/favicons/chrome.png")
         mathResult = null
         if(q.match(/^[0-9]+$/) == null) {
             stringMath(q, (err, res) => {
