@@ -1,0 +1,19 @@
+{
+    "name": "TabsLight",
+    "description": "Search into your opened tabs like ctrl+P command of visual studio code",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "tabs"
+    ],
+    "commands": {
+        "_execute_action": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+P"
+            }
+        }
+    }
+}

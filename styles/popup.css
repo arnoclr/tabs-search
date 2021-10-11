@@ -1,0 +1,114 @@
+.container {
+    width: 320px;
+    max-height: 50vh;
+}
+
+body {
+    margin: 0;
+}
+
+.icon-button {
+    border: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 50%;
+}
+.icon-button:hover {
+    background-color: rgb(150 150 150 / 20%);
+}
+.icon-button svg {
+    color: #333;
+}
+.icon-button--small {
+    height: 24px;
+    width: 24px;
+    padding: 4px;
+}
+.icon-button--small svg {
+    height: 16px;
+    width: 16px;
+}
+
+.input {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.input__icon {
+    color: #000;
+    width: 24px;
+    height: 24px;
+    margin: 0 16px;
+}
+.input__field {
+    width: 174px;
+    border: none;
+    outline: none;
+}
+.input__field::placeholder {
+    color: #555;
+}
+.input__shortcut {
+    color: #555;
+    margin: 0 16px;
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+    max-height: 280px;
+    list-style: none;
+}
+.list__item {
+    position: relative;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.list__item:hover, .list__item--selected {
+    background-color: #e8e8e8;
+}
+.list__item--active {
+    background-color: #d8d8d8;
+}
+.list__item-favicon {
+    width: 16px;
+    height: 16px;
+    margin: 20px;
+}
+.list__item-text {
+    width: -webkit-fill-available;
+    max-width: 250px;
+    margin-right: 24px;
+}
+.list__item:hover .list__item-text {
+    margin-right: 56px;
+    max-width: 228px;
+}
+.list__item-first-line {
+    display: block;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.list__item-second-line {
+    display: block;
+    color: #666;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.list__item-action {
+    display: none;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+.list__item:hover .list__item-action {
+    display: block;
+}
